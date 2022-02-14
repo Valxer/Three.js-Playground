@@ -1,4 +1,4 @@
-import { camelize, createApp } from 'vue'
+import { createApp } from 'vue'
 import App from './App.vue'
 import * as THREE from 'three'
 
@@ -18,19 +18,31 @@ document.body.appendChild(renderer.domElement)
 const geometry = new THREE.PlaneGeometry(5, 5, 10, 10)
 
 // Creating the material in which is made the object
-const material = new THREE.MeshBasicMaterial({
+const material = new THREE.MeshPhongMaterial({
     color : 0xff0000,
-    side: THREE.DoubleSide
+    side: THREE.DoubleSide,
+    flatShading: THREE.FlatShading
 })
 
 // Combining shape and material into a mesh
 const mesh = new THREE.Mesh(geometry, material)
+const { array } = mesh.geometry.attributes.position
+for (let i = 0; i < array.length; i += 3) {
+    // const z = array[i + 2]
+    array[i + 2] += Math.random()
+}
 
-//adding the object to the scene and setting camera position in oreder to see the object
+// Creating a light and positioning it 
+const light = new THREE.DirectionalLight(0xffffff, 1)
+light.position.set(0, 0, 5)
+
+// Adding the object and light to the scene and setting camera position in oreder to see the object
 scene.add(mesh)
+scene.add(light)
 camera.position.z = 7
 
-//animating the object
+
+// Animating the object
 function animate() {
     requestAnimationFrame(animate)
     renderer.render(scene, camera)
