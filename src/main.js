@@ -1,9 +1,12 @@
 import { createApp } from 'vue'
 import App from './App.vue'
 import * as THREE from 'three'
+import * as dat from 'dat.gui'
 
+// ------ VUE APP CREATION --------
 createApp(App).mount('#app')
 
+// ------- THREE JS PART -----------
 // Creating scene camera and renderer for our three js display
 const scene = new THREE.Scene()
 const camera = new THREE.PerspectiveCamera(75, innerWidth / innerHeight, 0.1, 1000)
