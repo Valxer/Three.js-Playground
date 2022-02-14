@@ -19,21 +19,6 @@ function animate() {
     const intersect = raycaster.intersectObject(mesh)
     if (intersect.length > 0) {
         const { color } = intersect[0].object.geometry.attributes
-
-        // color.setX(intersect[0].face.a, .1)
-        // color.setY(intersect[0].face.a, .5)
-        // color.setZ(intersect[0].face.a, 1)
-        
-        // color.setX(intersect[0].face.b, .1)
-        // color.setY(intersect[0].face.b, .5)
-        // color.setZ(intersect[0].face.b, 1)
-        
-        // color.setX(intersect[0].face.c, .1)
-        // color.setY(intersect[0].face.c, .5)
-        // color.setZ(intersect[0].face.c, 1)
-
-        // color.needsUpdate = true
-
         const initialColor =  {
             r: 0,
             g: .19,
