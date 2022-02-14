@@ -1,6 +1,7 @@
 import { createApp } from 'vue'
 import App from './App.vue'
 import * as THREE from 'three'
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import * as dat from 'dat.gui'
 
 // ------ VUE APP CREATION --------
@@ -52,7 +53,7 @@ const geometry = new THREE.PlaneGeometry(10, 10, 10, 10)
 
 // Creating the material in which is made the object
 const material = new THREE.MeshPhongMaterial({
-    color : 0xff0000,
+    color : 0x00468b,
     side: THREE.DoubleSide,
     flatShading: THREE.FlatShading
 })
@@ -60,14 +61,18 @@ const material = new THREE.MeshPhongMaterial({
 // Combining shape and material into a mesh
 const mesh = new THREE.Mesh(geometry, material)
 addJaggedness()
-
-// Creating a light and positioning it 
-const light = new THREE.DirectionalLight(0xffffff, 1)
-light.position.set(0, 0, 5)
-
-// Adding the object and light to the scene and setting camera position in oreder to see the object
 scene.add(mesh)
+
+// Creating a light, backlight and positioning them 
+const light = new THREE.DirectionalLight(0xffffff, 1)
+light.position.set(0, 0, 1)
 scene.add(light)
+const backLight = new THREE.DirectionalLight(0xffffff, 1)
+backLight.position.set(0, 0, -1)
+scene.add(backLight)
+
+// Setting orbit control and default camera position
+const controls = new OrbitControls(camera, renderer.domElement)
 camera.position.z = 20
 
 // Creating dat.gui interface to interact with our plane dimensions dynamically
@@ -86,10 +91,10 @@ gui.add(world.object, 'width', 1, 20).onChange(() => {
 gui.add(world.object, 'height', 1, 20).onChange(() => {
     updateMesh()
 })
-gui.add(world.object, 'widthSegments', 1, 20).onChange(() => {
+gui.add(world.object, 'widthSegments', 1, 50).onChange(() => {
     updateMesh()
 })
-gui.add(world.object, 'heightSegments', 1, 20).onChange(() => {
+gui.add(world.object, 'heightSegments', 1, 50).onChange(() => {
     updateMesh()
 })
 
