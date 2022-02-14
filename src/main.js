@@ -13,9 +13,24 @@ createApp(App).mount('#app')
 // ********** FUNCTIONS *************
 // Handles all animation/effects on our object
 function animate() {
+    //loops the animation
     requestAnimationFrame(animate)
     renderer.render(scene, camera)
     raycaster.setFromCamera(mouse, camera)
+    frame += 0.01
+
+    const  { 
+        array,
+        originalPosition,
+        randomValues
+    } = mesh.geometry.attributes.position
+    for (let i = 0; i < array.length; i += 3) {
+        array[i] = originalPosition[i] + Math.cos(frame + randomValues[i]) * 0.002
+        array[i + 1] = originalPosition[i + 1] + Math.sin(frame + randomValues[i + 1]) * 0.002
+    }
+    mesh.geometry.attributes.position.needsUpdate = true
+
+    // Handling change of color on hover
     const intersect = raycaster.intersectObject(mesh)
     if (intersect.length > 0) {
         const { color } = intersect[0].object.geometry.attributes
@@ -55,9 +70,22 @@ function animate() {
 // Allows to modify z coordinates of our plane to jag it
 function addJaggedness() {
     const { array } = mesh.geometry.attributes.position
-    for (let i = 0; i < array.length; i += 3) {
-        array[i + 2] += Math.random()
+    const randomValues = []
+    for (let i = 0; i < array.length; i++) {
+        if (i % 3 === 0) {
+            const x = array[i]
+            const y = array[i + 1]
+            
+            array[i] = x + (Math.random()- 0.5) * 2
+            array[i + 1] = y + (Math.random()- 0.5) * 2
+            array[i + 2] += (Math.random()- 0.5) * 3
+        }
+
+        randomValues.push(Math.random() * Math.PI * 2)
     }
+    mesh.geometry.attributes.position.originalPosition = array
+    mesh.geometry.attributes.position.randomValues = randomValues
+
 }
 
 // Modifies mesh geometry using dat.gui
@@ -97,7 +125,7 @@ renderer.setPixelRatio(devicePixelRatio)
 document.body.appendChild(renderer.domElement)
 
 // Creating the shape of our object
-const geometry = new THREE.PlaneGeometry(400, 400, 50, 50)
+const geometry = new THREE.PlaneGeometry(300, 300, 75, 75)
 
 // Creating the material in which is made the object
 const material = new THREE.MeshPhongMaterial({
@@ -124,25 +152,24 @@ mesh.geometry.setAttribute(
 
 // Creating a light, backlight and positioning them 
 const light = new THREE.DirectionalLight(0xffffff, 1)
-light.position.set(0, 0, 1)
+light.position.set(0, 0.6, 1)
 scene.add(light)
 const backLight = new THREE.DirectionalLight(0xffffff, 1)
 backLight.position.set(0, 0, -1)
 scene.add(backLight)
 
 // Setting orbit control and default camera position
-camera.position.z = 100
-camera.position.y = -30
+camera.position.z = 40
 const controls = new OrbitControls(camera, renderer.domElement)
 
 // Creating dat.gui interface to interact with our plane dimensions dynamically
 const gui = new dat.GUI()
 const world = {
     object: {
-        width: 400,
-        height: 400,
-        widthSegments: 50,
-        heightSegments: 50
+        width: 300,
+        height: 300,
+        widthSegments: 75,
+        heightSegments: 75
     }
 }
 gui.add(world.object, 'width', 1, 1000).onChange(() => {
@@ -168,4 +195,5 @@ addEventListener('mousemove', (event) => {
     mouse.y = -(event.clientY / innerHeight) * 2 + 1
 })
 
+let frame = 0;
 animate()
