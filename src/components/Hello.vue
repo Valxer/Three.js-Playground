@@ -12,6 +12,7 @@
 $textheight: 20%;
 $textwidth: 75%;
 .instructions{
+  pointer-events: none;
   position: absolute;
   width: $textwidth;
   height: $textheight;
